@@ -10,6 +10,8 @@
 #include "utils.h"
 #include "Shader.h"
 #include "Camera.h"
+#include "Texture.h"
+#include "SpriteRenderer.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -269,6 +271,9 @@ int main(void)
     // VBOs) when it's not directly necessary.
     glBindVertexArray(0);
 
+    Texture* sprite_tex = new Texture("images/awesomeface.png");
+    SpriteRenderer* renderer = new SpriteRenderer();
+
     while(!glfwWindowShouldClose(window))
     {
         process_input(window);
@@ -305,6 +310,8 @@ int main(void)
                                 // every time, but we'll do so to keep things a bit more organized
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0); // no need to unbind it every time
+
+        renderer->draw(*sprite_tex, {10.0f, 10.0f}, {50.0f, 50.0f}, 0.0f);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

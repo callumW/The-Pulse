@@ -6,7 +6,9 @@ src/main.cpp \
 src/glad.c \
 src/utils.cpp \
 src/Shader.cpp \
-src/Camera.cpp
+src/Camera.cpp \
+src/SpriteRenderer.cpp \
+src/Texture.cpp
 
 INCLUDES= \
 -Iinclude \

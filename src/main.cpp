@@ -15,8 +15,8 @@
 #include "stb_image.h"
 
 // settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 1920;
+const unsigned int SCR_HEIGHT = 1080;
 
 // Camera vars
 glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
@@ -180,7 +180,7 @@ int main(void)
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &num_vertex_attribs);
     std::cout << "Num supported vertex attributes: " << num_vertex_attribs << std::endl;
 
-    glViewport(0, 0, 800, 600);
+    glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     glfwSetCursorPos(window, lastX, lastY);     // TODO this isn't really working :(

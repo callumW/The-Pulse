@@ -50,7 +50,6 @@ typedef struct pulse_state {
 } pulse_state_t;
 
 pulse_state_t pulse_state = {};
-float const PULSE_RADIUS_INCREASE = 1.0f;
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -67,7 +66,6 @@ void process_input(GLFWwindow* window)
 
     glm::vec3 movement_dir{0.0f, 0.0f, 0.0f};
     bool moved = false;
-    const float cameraSpeed = 0.05f; // adjust accordingly
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         movement_dir.z = 1.0f;
         moved = true;
@@ -189,7 +187,7 @@ int main(void)
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
 
-    Shader triangle_shader{"src/shaders/triangle.vs", "src/shaders/triangle.fs"};
+    Shader pulse_shader{"src/shaders/pulse_wavefront.vs", "src/shaders/pulse_wavefront.fs"};
 
     // Cube
     float vertices[] = {
@@ -283,9 +281,9 @@ int main(void)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-        triangle_shader.use();
-        triangle_shader.setVec2("pulse_location", glm::vec2(lastX, lastY));
-        triangle_shader.setFloat("pulse_radius", pulse_state.radius);
+        pulse_shader.use();
+        pulse_shader.setVec2("pulse_location", glm::vec2(lastX, lastY));
+        pulse_shader.setFloat("pulse_radius", pulse_state.radius);
 
 
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it

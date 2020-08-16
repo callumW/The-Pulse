@@ -232,42 +232,6 @@ int main(void)
     glBindVertexArray(0);
     // Stopped recording our actions
 
-    Shader sub_shader{"src/shaders/sub.vs", "src/shaders/sub.fs"};
-
-    float sub_vertices[] = {
-        -0.5f, 0.5f, 1.0f,  // top left
-        0.5f, 0.5, 1.0f,    // top right
-        0.5f, -0.5f, 1.0f,  // bottom right
-        -0.5f, -0.5f, 1.0f  // bttom left
-    };
-    unsigned int sub_indices[] = {
-        0, 1, 3, // first triangle
-        1, 2, 3  // second triangle
-    };
-
-    unsigned int sub_VAO, sub_VBO, sub_EBO;
-    glGenVertexArrays(1, &sub_VAO);
-    glGenBuffers(1, &sub_VBO);
-    glGenBuffers(1, &sub_EBO);
-
-    glBindVertexArray(sub_VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, sub_VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(sub_vertices), sub_vertices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sub_EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(sub_indices), sub_indices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but
-    // this rarely happens. Modifying other
-    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor
-    // VBOs) when it's not directly necessary.
-    glBindVertexArray(0);
 
     Texture* sprite_tex = new Texture("images/awesomeface.png");
     SpriteRenderer* renderer = new SpriteRenderer();
@@ -287,16 +251,6 @@ int main(void)
 
 
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it
-                                // every time, but we'll do so to keep things a bit more organized
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0); // no need to unbind it every time
-
-        sub_shader.use();
-        sub_shader.setVec2("pulse_location", glm::vec2(lastX, lastY));
-        sub_shader.setFloat("pulse_radius", pulse_state.radius);
-
-
-        glBindVertexArray(sub_VAO); // seeing as we only have a single VAO there's no need to bind it
                                 // every time, but we'll do so to keep things a bit more organized
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0); // no need to unbind it every time

@@ -10,13 +10,19 @@ src/Camera.cpp \
 src/SpriteRenderer.cpp \
 src/Texture.cpp
 
+BOX_2D_PATH= /Users/cwilson/Libs/box2d/1025f9a
+BOX_2D_INCLUDES= -I${BOX_2D_PATH}/include
+BOX_2D_FLAGS= -L${BOX_2D_PATH} -lbox2d
+
 INCLUDES= \
 -Iinclude \
 -I${GLFW_PATH}/include \
--I${GLM_PATH}/include
+-I${GLM_PATH}/include \
+${BOX_2D_INCLUDES}
 
 LIBS= \
 -L${GLFW_PATH}/lib -lglfw \
+${BOX_2D_FLAGS}
 
 LD_FLAGS = ${LIBS}
 

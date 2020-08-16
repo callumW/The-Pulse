@@ -35,7 +35,19 @@ float fov = 45.0f;
 
 Camera camera = {};
 
-float pulse_triggered = false;
+
+double const PULSE_SPEED = SCR_WIDTH / 3.0;  // pixels per second
+double const MAX_PULSE_RADIUS = SCR_WIDTH / 2.0;
+double const MAX_PULSE_TIME = MAX_PULSE_RADIUS / PULSE_SPEED;
+
+typedef struct pulse_state {
+    double charge_start = -1.0;
+    double pulse_start = -1.0;
+    double pulse_end = -1.0;
+    float radius = -1.0f;
+} pulse_state_t;
+
+pulse_state_t pulse_state = {};
 float const PULSE_RADIUS_INCREASE = 1.0f;
 
 
@@ -72,13 +84,6 @@ void process_input(GLFWwindow* window)
         moved = true;
     }
 
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-        pulse_triggered = true;
-    }
-    else {
-        pulse_triggered = false;
-    }
-
     if (moved) {
         camera.move(movement_dir, 0.016);    // pretend it's 60fps for now
     }
@@ -109,6 +114,38 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 void error_callback(int err, char const* err_str)
 {
     std::cout << "GLFW error: " << err_str << std::endl;
+}
+
+void update_pulse(GLFWwindow* window, double time)
+{
+    if (pulse_state.charge_start >= 0.0) {   // charging pulse
+        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE) { // kick off pulse
+            pulse_state.pulse_start = time;
+            double pulse_length = pulse_state.pulse_start - pulse_state.charge_start;
+            pulse_state.pulse_end =
+                pulse_state.pulse_start + glm::min(MAX_PULSE_TIME, pulse_length);
+
+            pulse_state.charge_start = -1.0;    // reset
+            // TODO play ping sound
+        }
+    }
+    else {  // Charging not charging pulse
+        if (pulse_state.pulse_start >= 0.0) {   // pulse in progress
+            if (time > pulse_state.pulse_end) {
+                pulse_state.pulse_end = -1.0;
+                pulse_state.pulse_start = -1.0;
+                pulse_state.radius = -1.0f;
+                pulse_state.charge_start = -1.0;
+            }
+            else {
+                // update radius
+                pulse_state.radius = PULSE_SPEED * (time - pulse_state.pulse_start);
+            }
+        }
+        else if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+            pulse_state.charge_start = time;
+        }
+    }
 }
 
 int main(void)
@@ -235,15 +272,16 @@ int main(void)
     while(!glfwWindowShouldClose(window))
     {
         process_input(window);
+        update_pulse(window, glfwGetTime());
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
         triangle_shader.use();
-        if (pulse_triggered) {
+        if (pulse_state.radius > 0.0f) {
             triangle_shader.setVec2("pulse_location", glm::vec2(lastX, lastY));
-            triangle_shader.setFloat("pulse_radius", 150.0f);
+            triangle_shader.setFloat("pulse_radius", pulse_state.radius);
         }
         else {
             triangle_shader.setFloat("pulse_radius", 0.0f);
@@ -255,9 +293,9 @@ int main(void)
         glBindVertexArray(0); // no need to unbind it every time
 
         sub_shader.use();
-        if (pulse_triggered) {
+        if (pulse_state.radius > 0.0f) {
             sub_shader.setVec2("pulse_location", glm::vec2(lastX, lastY));
-            sub_shader.setFloat("pulse_radius", 150.0f);
+            sub_shader.setFloat("pulse_radius", pulse_state.radius);
         }
         else {
             sub_shader.setFloat("pulse_radius", 0.0f);

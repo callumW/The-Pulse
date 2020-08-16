@@ -29,3 +29,4 @@ all:
 .PHONY: clean
 clean:
 	rm -f ${BINOUT}
+	rm -rf *.dSYM

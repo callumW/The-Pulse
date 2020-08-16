@@ -284,13 +284,9 @@ int main(void)
 
 
         triangle_shader.use();
-        if (pulse_state.radius > 0.0f) {
-            triangle_shader.setVec2("pulse_location", glm::vec2(lastX, lastY));
-            triangle_shader.setFloat("pulse_radius", pulse_state.radius);
-        }
-        else {
-            triangle_shader.setFloat("pulse_radius", 0.0f);
-        }
+        triangle_shader.setVec2("pulse_location", glm::vec2(lastX, lastY));
+        triangle_shader.setFloat("pulse_radius", pulse_state.radius);
+
 
         glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it
                                 // every time, but we'll do so to keep things a bit more organized
@@ -298,13 +294,9 @@ int main(void)
         glBindVertexArray(0); // no need to unbind it every time
 
         sub_shader.use();
-        if (pulse_state.radius > 0.0f) {
-            sub_shader.setVec2("pulse_location", glm::vec2(lastX, lastY));
-            sub_shader.setFloat("pulse_radius", pulse_state.radius);
-        }
-        else {
-            sub_shader.setFloat("pulse_radius", 0.0f);
-        }
+        sub_shader.setVec2("pulse_location", glm::vec2(lastX, lastY));
+        sub_shader.setFloat("pulse_radius", pulse_state.radius);
+
 
         glBindVertexArray(sub_VAO); // seeing as we only have a single VAO there's no need to bind it
                                 // every time, but we'll do so to keep things a bit more organized

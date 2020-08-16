@@ -47,6 +47,7 @@ typedef struct pulse_state {
     double pulse_start = -1.0;
     double pulse_end = -1.0;
     float radius = -1.0f;
+    glm::vec2 pulse_position = {0.0f, 0.0f};
 } pulse_state_t;
 
 pulse_state_t pulse_state = {};
@@ -124,6 +125,8 @@ void update_pulse(GLFWwindow* window, double time)
             double pulse_length = pulse_state.pulse_start - pulse_state.charge_start;
             pulse_state.pulse_end =
                 pulse_state.pulse_start + glm::min(MAX_PULSE_TIME, pulse_length);
+
+            pulse_state.pulse_position = {lastX, lastY};
 
             pulse_state.charge_start = -1.0;    // reset
             // TODO play ping sound
@@ -246,7 +249,7 @@ int main(void)
 
 
         pulse_shader.use();
-        pulse_shader.setVec2("pulse_location", glm::vec2(lastX, lastY));
+        pulse_shader.setVec2("pulse_location", pulse_state.pulse_position);
         pulse_shader.setFloat("pulse_radius", pulse_state.radius);
 
 
@@ -256,7 +259,7 @@ int main(void)
         glBindVertexArray(0); // no need to unbind it every time
 
         renderer->set_pulse_radius(pulse_state.radius);
-        renderer->set_pulse_location(glm::vec2(lastX, lastY));
+        renderer->set_pulse_location(pulse_state.pulse_position);
         renderer->draw(*sprite_tex, {10.0f, 10.0f}, {50.0f, 50.0f}, 0.0f);
 
         glfwSwapBuffers(window);

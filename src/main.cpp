@@ -311,6 +311,8 @@ int main(void)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0); // no need to unbind it every time
 
+        renderer->set_pulse_radius(pulse_state.radius);
+        renderer->set_pulse_location(glm::vec2(lastX, lastY));
         renderer->draw(*sprite_tex, {10.0f, 10.0f}, {50.0f, 50.0f}, 0.0f);
 
         glfwSwapBuffers(window);

@@ -55,6 +55,9 @@ void SpriteRenderer::draw(Texture const& tex,
 
     sprite_shader.setMat4("model", model);
 
+    sprite_shader.setFloat("pulse_radius", radius);
+    sprite_shader.setVec2("pulse_location", pulse_location);
+
     glm::mat4 projection = glm::ortho(0.0f, 800.0f, 600.0f, 0.0f, -1.0f, 1.0f);
     sprite_shader.setMat4("projection", projection);
 

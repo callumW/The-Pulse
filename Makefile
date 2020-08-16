@@ -20,7 +20,7 @@ LD_FLAGS = ${LIBS}
 
 CFLAGS= -Wall -g
 
-BINOUT=go-go-opengl
+BINOUT=the-pulse
 
 .PHONY: all
 all:

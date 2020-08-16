@@ -4,5 +4,7 @@ the-pulse.app
 the-pulse.out
 the-pulse
 
+*.dSYM/
+
 # object files
 *.o

@@ -1,0 +1,8 @@
+#binary
+the-pulse.exe
+the-pulse.app
+the-pulse.out
+the-pulse
+
+# object files
+*.o

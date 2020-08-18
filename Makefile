@@ -8,7 +8,8 @@ src/utils.cpp \
 src/Shader.cpp \
 src/Camera.cpp \
 src/SpriteRenderer.cpp \
-src/Texture.cpp
+src/Texture.cpp \
+src/Sound.cpp
 
 BOX_2D_PATH= /Users/cwilson/Libs/box2d/1025f9a
 BOX_2D_INCLUDES= -I${BOX_2D_PATH}/include
@@ -18,11 +19,14 @@ INCLUDES= \
 -Iinclude \
 -I${GLFW_PATH}/include \
 -I${GLM_PATH}/include \
-${BOX_2D_INCLUDES}
+${BOX_2D_INCLUDES} \
+-F/Users/cwilson/Libs/SDL/
+
 
 LIBS= \
 -L${GLFW_PATH}/lib -lglfw \
-${BOX_2D_FLAGS}
+${BOX_2D_FLAGS} \
+-F/Users/cwilson/Libs/SDL/ -framework SDL2_mixer -framework SDL2 -Wl,-rpath,/Users/cwilson/Libs/SDL/
 
 LD_FLAGS = ${LIBS}
 

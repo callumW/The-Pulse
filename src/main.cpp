@@ -5,6 +5,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <SDL2_mixer/SDL_mixer.h>
+
 #include <iostream>
 
 #include "utils.h"
@@ -12,6 +14,7 @@
 #include "Camera.h"
 #include "Texture.h"
 #include "SpriteRenderer.h"
+#include "Sound.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -51,6 +54,7 @@ typedef struct pulse_state {
 } pulse_state_t;
 
 pulse_state_t pulse_state = {};
+Sound* pulse_sound = nullptr;
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -130,6 +134,9 @@ void update_pulse(GLFWwindow* window, double time)
 
             pulse_state.charge_start = -1.0;    // reset
             // TODO play ping sound
+            if (pulse_sound != nullptr) {
+                pulse_sound->play();
+            }
         }
     }
     else {  // Charging not charging pulse
@@ -153,6 +160,19 @@ void update_pulse(GLFWwindow* window, double time)
 
 int main(void)
 {
+
+    if (Mix_Init(MIX_INIT_MP3) != MIX_INIT_MP3) {
+        std::cout << "Failed to init sound system: " << Mix_GetError() << std::endl;
+        exit(1);
+    }
+
+    if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 4096) != 0) {
+        std::cout << "Failed to open audio system: " << Mix_GetError() << std::endl;
+        exit(1);
+    }
+
+    pulse_sound = new Sound("sounds/sonar_ping.wav");
+
     glfwInit();
     glfwSetErrorCallback(error_callback);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -272,5 +292,7 @@ int main(void)
     glDeleteBuffers(1, &VBO);
 
     glfwTerminate();
+
+    Mix_Quit();
     return 0;
 }

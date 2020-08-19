@@ -133,7 +133,7 @@ void update_pulse(GLFWwindow* window, double time)
             pulse_state.pulse_position = {lastX, lastY};
 
             pulse_state.charge_start = -1.0;    // reset
-            // TODO play ping sound
+
             if (pulse_sound != nullptr) {
                 pulse_sound->play(static_cast<int>(1000.0 * (pulse_state.pulse_end - pulse_state.pulse_start)));
             }

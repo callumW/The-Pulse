@@ -10,6 +10,7 @@ public:
     ~Sound();
 
     void play();
+    void play(int ms);  // play with fade out after ms
 private:
     Mix_Chunk* sound_chunk;
 };

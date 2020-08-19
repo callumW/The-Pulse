@@ -19,6 +19,17 @@ void Sound::play()
     }
 }
 
+void Sound::play(int ms)
+{
+    int chan = Mix_PlayChannel(-1, sound_chunk, 0);
+    if (chan != -1) {
+        std::cout << "Fading channel out after " << ms << "ms" << std::endl;
+        if (Mix_FadeOutChannel(chan, ms) == 0) {
+            std::cout << "Failed to fade out channel: " << Mix_GetError() << std::endl;
+        }
+    }
+}
+
 Sound::~Sound()
 {
     Mix_FreeChunk(sound_chunk);

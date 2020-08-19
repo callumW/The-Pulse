@@ -9,7 +9,8 @@ src/Shader.cpp \
 src/Camera.cpp \
 src/SpriteRenderer.cpp \
 src/Texture.cpp \
-src/Sound.cpp
+src/Sound.cpp \
+src/PulseRenderer.cpp
 
 BOX_2D_PATH= /Users/cwilson/Libs/box2d/1025f9a
 BOX_2D_INCLUDES= -I${BOX_2D_PATH}/include

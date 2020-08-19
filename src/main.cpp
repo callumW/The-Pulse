@@ -15,6 +15,7 @@
 #include "Texture.h"
 #include "SpriteRenderer.h"
 #include "Sound.h"
+#include "PulseRenderer.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -44,14 +45,6 @@ Camera camera = {};
 double const PULSE_SPEED = SCR_WIDTH / 3.0;  // pixels per second
 double const MAX_PULSE_RADIUS = SCR_WIDTH / 2.0;
 double const MAX_PULSE_TIME = MAX_PULSE_RADIUS / PULSE_SPEED;
-
-typedef struct pulse_state {
-    double charge_start = -1.0;
-    double pulse_start = -1.0;
-    double pulse_end = -1.0;
-    float radius = -1.0f;
-    glm::vec2 pulse_position = {0.0f, 0.0f};
-} pulse_state_t;
 
 pulse_state_t pulse_state = {};
 Sound* pulse_sound = nullptr;
@@ -212,52 +205,9 @@ int main(void)
 
     Shader pulse_shader{"src/shaders/pulse_wavefront.vs", "src/shaders/pulse_wavefront.fs"};
 
-    // Cube
-    float vertices[] = {
-        -1.0f, 1.0f, 1.0f,  // top left
-        1.0f, 1.0, 1.0f,    // top right
-        1.0f, -1.0f, 1.0f,  // bottom right
-        -1.0f, -1.0f, 1.0f  // bttom left
-    };
-    unsigned int indices[] = {
-        0, 1, 3, // first triangle
-        1, 2, 3  // second triangle
-    };
-
-    unsigned int VAO, VBO, EBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-
-    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure
-    // vertex attributes(s).
-    glBindVertexArray(VAO);
-    // Now we have begun recording our actions
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    // location 0 is the vertex pos
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex
-    // attribute's bound vertex buffer object so afterwards we can safely unbind
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but
-    // this rarely happens. Modifying other
-    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor
-    // VBOs) when it's not directly necessary.
-    glBindVertexArray(0);
-    // Stopped recording our actions
-
-
     Texture* sprite_tex = new Texture("images/awesomeface.png");
     SpriteRenderer* renderer = new SpriteRenderer();
+    PulseRenderer* pulse_renderer = new PulseRenderer();
 
     while(!glfwWindowShouldClose(window))
     {
@@ -267,16 +217,7 @@ int main(void)
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-        pulse_shader.use();
-        pulse_shader.setVec2("pulse_location", pulse_state.pulse_position);
-        pulse_shader.setFloat("pulse_radius", pulse_state.radius);
-
-
-        glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it
-                                // every time, but we'll do so to keep things a bit more organized
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0); // no need to unbind it every time
+        pulse_renderer->draw(pulse_state);
 
         renderer->set_pulse_radius(pulse_state.radius);
         renderer->set_pulse_location(pulse_state.pulse_position);
@@ -285,11 +226,6 @@ int main(void)
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-
-    // optional: de-allocate all resources once they've outlived their purpose:
-    // ------------------------------------------------------------------------
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
 
     glfwTerminate();
 
